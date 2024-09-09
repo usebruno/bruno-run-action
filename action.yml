@@ -1,0 +1,103 @@
+name: bru-run-action
+description: Executes Bru CLI against a bruno collection or single request.
+author: Max Bauer
+branding:
+  color: orange
+  icon: chevron-right
+
+inputs:
+  # tag::inputs[]
+  csv-file-path:
+    description: CSV file pat for input parameters
+    required: false
+  path:
+    # prettier-ignore
+    description: >-
+      Path of the target bruno collection.
+      Should point to the root directory of the collection.
+      If not provided it uses the current working directory.
+    required: false
+    default: .
+  filename:
+    # prettier-ignore
+    description: >-
+      File or folder name of the requests to run.
+      It is relative to the `path` input.
+    required: false
+  recursive:
+    description: Indicate a recursive run.
+    required: false
+    default: 'false'
+  ca-cert:
+    description: CA certificate to verify peer against.
+    required: false
+  env:
+    description: Select a collection environment.
+    required: false
+    default: ''
+  env-vars:
+    description: List of environment variables to set with the run.
+    required: false
+    default: ''
+  ignore-truststore:
+    # prettier-ignore
+    description: >-
+      The specified custom CA certificate (--cacert) will be used exclusively and the default truststore is ignored,
+      if this option is specified.
+      Evaluated in combination with "--cacert" only.
+    required: false
+    default: 'false'
+  output:
+    # prettier-ignore
+    description: >-
+      Output file containing test results.
+      The path is relative to the current working-directory and not to the targeted bruno collection.
+    required: false
+  output-format:
+    # prettier-ignore
+    description: >-
+      The output format of the test results.
+      Possible values `html|json|junit`.
+    required: false
+    default: json
+  insecure:
+    description: Allow insecure server connections.
+    required: false
+    default: 'false'
+  sandbox:
+    description: Javscript sandbox to use. Available sandboxes are 'developer|safe'
+    required: false
+  tests-only:
+    description: Only run requests that have a test.
+    required: false
+  bail:
+    description: Stop execution after a failure of a request, test, or assertion.
+    required: false
+  # end::inputs[]
+
+outputs:
+  # tag::outputs[]
+  success:
+    description: Indicates test run success status.
+  bru-version:
+    description: Bruno CLI version used during workflow execution.
+  # end::outputs[]
+
+runs:
+  using: docker
+  image: Dockerfile
+  env:
+    IN_CSV_FILEPATH: ${{ inputs.csv-file-path }}
+    IN_PATH: ${{ inputs.path }}
+    IN_FILENAME: ${{ inputs.filename }}
+    IN_IGNORE_TRUSTSTORE: ${{ inputs.ignore-truststore }}
+    IN_RECURSIVE: ${{ inputs.recursive }}
+    IN_CA_CERT: ${{ inputs.ca-cert }}
+    IN_ENV: ${{ inputs.env }}
+    IN_ENV_VARS: ${{ inputs.env-vars }}
+    IN_OUTPUT: ${{ inputs.output }}
+    IN_OUTPUT_FORMAT: ${{ inputs.output-format }}
+    IN_SANDBOX: ${{ inputs.sandbox }}
+    IN_INSECURE: ${{ inputs.insecure }}
+    IN_TESTS_ONLY: ${{ inputs.tests-only }}
+    IN_BAIL: ${{ inputs.bail }}
